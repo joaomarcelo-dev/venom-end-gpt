@@ -2,6 +2,7 @@ import { Whatsapp, Message } from 'venom-bot';
 import { sendMessageGPT } from '../utils/gpt.utils';
 import { listOfCommands } from '../utils/commands.utils';
 import { numberIncludesInMessagesTemp, objectMessagesTemp } from '../temp/messages.temp';
+import { verifyCommand } from '../utils/messages.utils';
 
 
 
