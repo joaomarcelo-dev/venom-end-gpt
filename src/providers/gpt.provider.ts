@@ -1,12 +1,8 @@
 import { OpenAI } from 'openai';
-import dotenv from 'dotenv';
-dotenv.config();
+import { GPT_API_KEY } from '../conf';
 
-const apiKey = process.env.OPENAI_API_KEY || "sem chave";
-
-console.log(apiKey);
 const openai = new OpenAI({
-  apiKey,
+  apiKey: GPT_API_KEY,
 });
 
 export default openai;
