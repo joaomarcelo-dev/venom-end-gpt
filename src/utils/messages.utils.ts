@@ -1,5 +1,7 @@
 import { Message, Whatsapp } from "venom-bot";
 import { listOfCommands } from "./commands.utils";
+import { objectMessagesTemp } from "../temp/messages.temp";
+import dayjs from "dayjs";
 
 export const verifyCommand = async (client: Whatsapp, message: Message) => {
   const characters = message.body.split('');
@@ -24,3 +26,21 @@ export const verifyCommand = async (client: Whatsapp, message: Message) => {
 
   return true;
 };
+
+
+export const deleteMessagesExpired = (client: Whatsapp) => {
+  const users = Object.keys(objectMessagesTemp).filter((user) => {
+    const messagesUser = objectMessagesTemp[user];
+
+    const expired = dayjs().isAfter(dayjs.unix(messagesUser[messagesUser.length - 1].expireIn));
+
+    if (expired) {
+      return user;
+    }
+  });
+  
+  users.forEach((user) => {
+    delete objectMessagesTemp[user];
+    client.sendText(user, 'Devido ao seu longo tempo de inatividade, as mensagens foram deletadas. Para iniciar novamente digite !venom');
+  });
+}
