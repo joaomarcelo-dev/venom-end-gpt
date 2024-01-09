@@ -61,8 +61,7 @@ const gereMessages = async (client: Whatsapp, message: Message) => {
     });
     
     await client.startTyping(message.from, false);
-    return await client.sendText(message.from, responseGPT.choices[0].message.content);
-    
+    return await client.sendText(message.from, responseGPT.choices[0].message.content); 
   }
 };
 
