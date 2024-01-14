@@ -1,13 +1,8 @@
 import { Whatsapp, Message } from 'venom-bot';
 import { sendMessageGPT } from '../utils/gpt.utils';
 import { listOfCommands } from '../utils/commands.utils';
-import { numberIncludesInMessagesTemp, objectMessagesTemp } from '../temp/messages.temp';
+import { numberIncludesInMessagesTemp, objectMessagesTemp, verifyVenomPaused } from '../temp/messages.temp';
 import { addMessageTemp, verifyCommand } from '../utils/messages.utils';
-import { generateUnixTime } from '../utils/time.utils';
-import { initialOrientationGPT3Turbo, timeExpireChat } from '../conf';
-import { saveImgBase64 } from '../utils/base64.utils';
-
-
 
 const appStart = (client: Whatsapp) => {
   client.onMessage(async (message: Message) => {    
@@ -21,32 +16,14 @@ const appStart = (client: Whatsapp) => {
 
 
 const gereMessages = async (client: Whatsapp, message: Message) => {
-  console.log(message);
+  const commandPlay = Object.values(listOfCommands).find(({ command }) => command === message.body);
 
-  if (message.content) saveImgBase64(message.content,);
-  
-  
-  if (message.body === listOfCommands.venom.command) {
-    addMessageTemp({
-      content: initialOrientationGPT3Turbo,
-      from: message.from,
-      model: listOfCommands.venom.model,
-      role: 'user',
-    })
+  if (commandPlay) return commandPlay?.action({ message, client });
 
-    return await client.sendText(message.from, 'Olá, eu sou o Venom🕸️, em que posso ajudar?');
-  }
-
-  if (message.body === listOfCommands.stop.command && numberIncludesInMessagesTemp(message.from)) {
-    delete objectMessagesTemp[message.from];
-
-    await client.sendText(
-      message.from,
-      'Dados de mensagens temporárias deletados! Obriagado por usar o Venom🕸️ e até a proxima ☺️',
-    );
-  }
-
-  if (numberIncludesInMessagesTemp(message.from)) {
+  if (
+    numberIncludesInMessagesTemp({ from: message.from, author: message.author })
+    && !verifyVenomPaused({ from: message.from })
+  ) {
     addMessageTemp({
       content: message.body,
       from: message.from,
@@ -74,10 +51,19 @@ const gereMessages = async (client: Whatsapp, message: Message) => {
       role: 'assistant'
     })
 
-    console.log(objectMessagesTemp);
+    const { isGroupMsg, messages } = objectMessagesTemp[message.from]; 
     
     await client.startTyping(message.from, false);
-    return await client.sendText(message.from, messageResponse); 
+
+    if (isGroupMsg) {
+      return await client.reply(
+        message.from,
+        `${messageResponse}${messages.length <=4 ? `\n\nPara pausar o venom e conversar livremente use o comando !pause para parar e !return para voltar de onde paramos. 😅`: ''}`,
+        message.id, 
+      ); 
+    }
+
+    return await client.sendText(message.from, messageResponse);
   }
 };
 

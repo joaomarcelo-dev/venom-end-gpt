@@ -48,7 +48,7 @@ export const deleteMessagesExpired = (client: Whatsapp) => {
   });
 }
 
-export const addMessageTemp = ({ from, content, model, role }: AddMessageTempType) => {
+export const addMessageTemp = ({ from, content, model, role, author, isGroupMsg, nameUser }: AddMessageTempType) => {
   if (!objectMessagesTemp[from]) {
     objectMessagesTemp[from] = {
       messages: [{
@@ -57,6 +57,10 @@ export const addMessageTemp = ({ from, content, model, role }: AddMessageTempTyp
         expireIn: generateUnixTime(timeExpireChat),
       }],
       model,
+      author,
+      isGroupMsg,
+      nameUser,
+      paused: false,
     }
   } else {
     objectMessagesTemp[from].messages.push({

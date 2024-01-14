@@ -8,6 +8,10 @@ export type MessageHistory = {
   [key: string]: {
     messages: MessageType[];
     model: string;
+    author?: string;
+    isGroupMsg?: boolean;
+    nameUser?: string;
+    paused: boolean;
   }
 };
 
