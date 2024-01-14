@@ -2,9 +2,10 @@ import { Whatsapp, Message } from 'venom-bot';
 import { sendMessageGPT } from '../utils/gpt.utils';
 import { listOfCommands } from '../utils/commands.utils';
 import { numberIncludesInMessagesTemp, objectMessagesTemp } from '../temp/messages.temp';
-import { verifyCommand } from '../utils/messages.utils';
+import { addMessageTemp, verifyCommand } from '../utils/messages.utils';
 import { generateUnixTime } from '../utils/time.utils';
-import { initialOrientation, timeExpireChat } from '../conf';
+import { initialOrientationGPT3Turbo, timeExpireChat } from '../conf';
+import { saveImgBase64 } from '../utils/base64.utils';
 
 
 
@@ -20,12 +21,18 @@ const appStart = (client: Whatsapp) => {
 
 
 const gereMessages = async (client: Whatsapp, message: Message) => {
+  console.log(message);
+
+  if (message.content) saveImgBase64(message.content,);
+  
+  
   if (message.body === listOfCommands.venom.command) {
-    objectMessagesTemp[message.from] = [{
-      content: initialOrientation,
+    addMessageTemp({
+      content: initialOrientationGPT3Turbo,
+      from: message.from,
+      model: listOfCommands.venom.model,
       role: 'user',
-      expireIn: generateUnixTime(timeExpireChat),
-    }];
+    })
 
     return await client.sendText(message.from, 'Olá, eu sou o Venom🕸️, em que posso ajudar?');
   }
@@ -40,28 +47,37 @@ const gereMessages = async (client: Whatsapp, message: Message) => {
   }
 
   if (numberIncludesInMessagesTemp(message.from)) {
-    objectMessagesTemp[message.from].push({
+    addMessageTemp({
       content: message.body,
+      from: message.from,
+      model: objectMessagesTemp[message.from].model,
       role: 'user',
-      expireIn: generateUnixTime(timeExpireChat)
-    });
+    })
 
     await client.startTyping(message.from, true);
-  
-    const responseGPT = await sendMessageGPT(objectMessagesTemp[message.from]);
+    
+    const responseGPT = await sendMessageGPT(
+      objectMessagesTemp[message.from].messages, 
+      objectMessagesTemp[message.from].model
+    );
 
-    if (responseGPT.choices[0].message.content === null) {
+    const messageResponse = responseGPT.choices[0].message.content;
+    
+    if (messageResponse === null) {
       return await client.sendText(message.from, 'Não entendi, pode repetir?');
     }
     
-    objectMessagesTemp[message.from].push({
-      content: responseGPT.choices[0].message.content,
-      role: 'assistant',
-      expireIn: generateUnixTime(timeExpireChat),
-    });
+    addMessageTemp({
+      from: message.from,
+      content: messageResponse,
+      model: objectMessagesTemp[message.from].model,
+      role: 'assistant'
+    })
+
+    console.log(objectMessagesTemp);
     
     await client.startTyping(message.from, false);
-    return await client.sendText(message.from, responseGPT.choices[0].message.content); 
+    return await client.sendText(message.from, messageResponse); 
   }
 };
 

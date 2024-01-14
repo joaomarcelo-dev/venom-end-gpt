@@ -4,7 +4,12 @@ type MessageType = {
   expireIn: number;
 }
 
-export type MessageHistory = Record<string, MessageType[]>;
+export type MessageHistory = {
+  [key: string]: {
+    messages: MessageType[];
+    model: string;
+  }
+};
 
 
 export {
