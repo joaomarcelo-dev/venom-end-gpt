@@ -11,6 +11,7 @@ export type MessageHistory = {
     author?: string;
     isGroupMsg?: boolean;
     nameUser?: string;
+    command?: string;
     paused: boolean;
   }
 };

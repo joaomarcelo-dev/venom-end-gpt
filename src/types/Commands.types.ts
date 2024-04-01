@@ -1,6 +1,6 @@
 import { Message, Whatsapp } from "venom-bot";
 
-type ActionParmsType = {
+export type ActionParmsType = {
   message: Message,
   client: Whatsapp,
 }
@@ -14,3 +14,4 @@ export type TypeCommands = {
     action: ({}: ActionParmsType) => void;
   };
 };
+
