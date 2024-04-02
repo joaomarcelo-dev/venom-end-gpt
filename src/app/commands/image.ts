@@ -51,6 +51,7 @@ export default {
 
     try {
       await client.sendImageFromBase64(message.from, imageBase64, 'image.png', 'Caption')
+      fsUtils.deletFileToPath(pathToFile);
     } catch (error) {
       console.log("Erro ao enviar com o sendImage", error);
       await client.sendText(message.from, 'Desculpe! Não consegui enviar a imagem... Tente acessar o link para visualizar a imagem gerada! 🖼️🔗');

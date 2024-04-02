@@ -44,6 +44,12 @@ const downloadFileByLink = (url: string): Promise<string> => {
   });
 }
 
+const deletFileToPath = (filePath: string) => {
+  if (fs.existsSync(filePath)) {
+    fs.unlinkSync(filePath);
+  }
+}
+
 const imageToBase64 = async (imagePath: string) => {
   if (!fs.existsSync(imagePath)) {
       console.error('Arquivo não encontrado:', imagePath);
@@ -63,6 +69,7 @@ const imageToBase64 = async (imagePath: string) => {
 const fsUtils = {
   downloadFileByLink,
   imageToBase64,
+  deletFileToPath,
 }
 
 export default fsUtils;

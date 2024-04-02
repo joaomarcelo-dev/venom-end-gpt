@@ -11,16 +11,18 @@ const appStart = (client: Whatsapp) => {
 
 
 const generateMessages = async (client: Whatsapp, message: Message) => {
-
-  const commandsPath = path.resolve(__dirname, 'commands');
-  const commands = fs.readdirSync(commandsPath).filter((file) => file.endsWith('.ts'));
-
+  const isMessageOfCommand = message.body.startsWith('!');
+  
   if (numberIncludesInMessagesTemp({ from: message.from })) {
     const command = objectMessagesTemp[message.from].command?.replace('!', '');
-
+    
     const { default: commandPlay } = await import(`./commands/${command}.ts`);
     return commandPlay.action({ message, client });
   }
+
+  const commandsPath = path.resolve(__dirname, 'commands');
+  const commands = fs.readdirSync(commandsPath).filter((file) => file.endsWith('.ts'));
+  
 
   for (const command of commands) {
     const { default: commandPlay } = await import(`./commands/${command}`);

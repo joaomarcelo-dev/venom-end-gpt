@@ -10,10 +10,16 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Messages {
-  id        String   @id @default(uuid())
-  createdAt DateTime
-  content   String
-  author    String
-  from      String
+model Users {
+  id     String   @id @default(uuid())
+  name   String
+  phone  String   @unique
+  Images Images[]
+}
+
+model Images {
+  id     String @id @default(uuid())
+  url    String
+  userId String
+  user   Users  @relation(fields: [userId], references: [id])
 }
