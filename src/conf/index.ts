@@ -2,7 +2,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 export const GPT_API_KEY = process.env.OPENAI_API_KEY || 'sem chave'; // Chave da API do GPT
-export const timeExpireChat = 20; // tempo em minutos para inspirar o tempo de chat no bot sem mais mensagens... Caso o usuario não envie mais mensagens, o bot para de responder.
+export const timeExpireChat = 7; // tempo em minutos para inspirar o tempo de chat no bot sem mais mensagens... Caso o usuario não envie mais mensagens, o bot para de responder.
 
 export const initialOrientationGPT3Turbo = `
   Você é um assistente pessoal chamado venom, 

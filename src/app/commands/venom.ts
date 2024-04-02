@@ -1,5 +1,5 @@
 import { objectMessagesTemp } from '../../temp/messages.temp';
-import { ActionParmsType } from '../../types/Commands.types';
+import { ActionParmsType, CommandType } from '../../types/Commands.types';
 import { sendMessageGPT } from '../../utils/gpt.utils';
 import { addMessageTemp } from '../../utils/messages.utils';
 
@@ -9,6 +9,20 @@ export default {
   description: "Inicia a conversa com o assistente virtual",
   details: "Este comando inicia a conversa com o assistente virtual Venom. Vc pode digitar qualquer coisa para iniciar a conversa.",
   model: 'gpt-3.5-turbo',
+  initialAction: async ({ client, message }: ActionParmsType) => {
+    addMessageTemp({
+      content: message.body,
+      from: message.from,
+      model: 'gpt-3.5-turbo',
+      role: 'user',
+      author: message.author,
+      command: message.body,
+      isGroupMsg: message.isGroupMsg,
+      nameUser: message.sender.pushname,
+    });
+
+    await client.sendText(message.from, 'Me pergunte qualquer coisa e eu lhe responderei')
+  },
   action: async ({ message, client }: ActionParmsType) => {
     addMessageTemp({
       content: message.body,
@@ -40,4 +54,4 @@ export default {
 
     await client.startTyping(message.from, false);
   }
-};
+} as CommandType;

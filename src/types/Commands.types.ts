@@ -15,3 +15,11 @@ export type TypeCommands = {
   };
 };
 
+export type CommandType = {
+  command: string
+  description: string
+  details?: string
+  model?: string
+  action: ({ client, message }: ActionParmsType) => void
+  initialAction?: ({ client, message }: ActionParmsType) => void
+}

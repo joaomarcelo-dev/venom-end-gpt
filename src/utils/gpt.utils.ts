@@ -17,4 +17,14 @@ export const sendMessageGPT = async (messages: MessageType[], model: string) => 
   return response;
 };
 
+export const generateImageGPT = async (prompt: string) => {
+  const imageUrl = await openai.images.generate({
+    prompt,
+    model: 'dall-e-2',
+    size: '512x512',
+  });
+
+  return imageUrl;  
+}
+
 export const verifyExpirationSession = (message: MessageType[]) => {};

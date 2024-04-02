@@ -11,6 +11,6 @@ create({
   routineInOneMinute(client);
 })
 .catch((error) => {
-  console.log(error);
+  console.log('Erro no venom: ', error);
 });
 
