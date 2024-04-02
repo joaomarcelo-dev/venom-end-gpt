@@ -4,7 +4,8 @@ import { routineInOneMinute } from './utils/time.utils';
 
 create({
   session: 'venom-end-gpt',
-
+  headless: 'new',
+  browserArgs: ['--no-sandbox', '--disable-setuid-sandbox'],
 })
 .then((client) => {
   appStart(client);

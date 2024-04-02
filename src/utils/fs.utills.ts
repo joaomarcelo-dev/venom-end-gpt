@@ -1,7 +1,9 @@
 import https from 'https';
 import fs from 'fs';
 import path from 'path';
+import mime from 'mime-types';
 import { v4 as uuidv4 } from 'uuid';
+import { ActionParmsType } from '../types/Commands.types';
 
 const downloadFileByLink = (url: string): Promise<string> => {
   return new Promise<string>((resolve, reject) => {
@@ -66,10 +68,33 @@ const imageToBase64 = async (imagePath: string) => {
   return base64Image;
 }
 
+const saveMidiaReceived = async ({ client, message }: ActionParmsType): Promise<string | undefined> => {
+  if (message.mediaData) {
+    const buffer = await client.decryptFile(message);
+    const fileName = `${uuidv4()}.${mime.extension(message.mimetype)}`;
+
+    // Define o caminho completo onde você quer salvar o arquivo
+    const filePath = path.join(__dirname, '../temp', fileName);
+
+    fs.writeFile(filePath, buffer, async (err) => {
+      if (err) {
+        console.log('Erro ao baixar o arquivo:', err);
+        await client.sendText(message.from, 'Erro ao baixar o arquivo');
+      } else {
+        console.log('Arquivo baixado com sucesso em:', filePath);
+        await client.sendText(message.from, 'Arquivo baixado com sucesso');
+      }
+    });
+
+    return filePath;
+  }
+}
+
 const fsUtils = {
   downloadFileByLink,
   imageToBase64,
   deletFileToPath,
+  saveMidiaReceived,
 }
 
 export default fsUtils;

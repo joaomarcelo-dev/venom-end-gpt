@@ -1,3 +1,4 @@
+import { objectMessagesTemp } from "../../temp/messages.temp";
 import { ActionParmsType, CommandType } from "../../types/Commands.types";
 import fsUtils from "../../utils/fs.utills";
 import { generateImageGPT } from "../../utils/gpt.utils";
@@ -50,8 +51,11 @@ export default {
     const imageBase64 = await fsUtils.imageToBase64(pathToFile);
 
     try {
-      await client.sendImageFromBase64(message.from, imageBase64, 'image.png', 'Caption')
+      await client.sendImageFromBase64(message.from, imageBase64, 'image.png', 'Resultado... 🖼️🎉')
       fsUtils.deletFileToPath(pathToFile);
+
+      delete objectMessagesTemp[message.from];
+      await client.sendText(message.from, 'Imagem gerada com sucesso! 🖼️🎉\nPara gerar uma nova imagem digite: !image 🖼️');
     } catch (error) {
       console.log("Erro ao enviar com o sendImage", error);
       await client.sendText(message.from, 'Desculpe! Não consegui enviar a imagem... Tente acessar o link para visualizar a imagem gerada! 🖼️🔗');
