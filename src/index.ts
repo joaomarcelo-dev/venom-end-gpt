@@ -4,6 +4,7 @@ import { routineInOneMinute } from './utils/time.utils';
 
 create({
   session: 'venom-end-gpt',
+  headless: false // Desativa o modo headless para exibir o navegador
 })
 .then((client) => {
   appStart(client);
@@ -12,4 +13,3 @@ create({
 .catch((error) => {
   console.log('Erro no venom: ', error);
 });
-
