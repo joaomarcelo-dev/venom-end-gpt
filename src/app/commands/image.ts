@@ -38,28 +38,35 @@ export default {
     });
 
     await client.sendText(message.from, 'Aguarde... ⏳')
-    const { data } = await generateImageGPT(message.body);
-
-    // URL da imagem para exemplo
-    const imageUrl = data[0]?.url; 
-    
-    if (!imageUrl) return await client.sendText(message.from, 'Desculpe! Não consegui gerar a imagem... por favor tente novamente!')
-
-
-    await client.sendText(message.from, 'Preparando a imagem! 🖼️⏳')
-    const pathToFile = await fsUtils.downloadFileByLink(imageUrl);
-    const imageBase64 = await fsUtils.imageToBase64(pathToFile);
 
     try {
-      await client.sendImageFromBase64(message.from, imageBase64, 'image.png', 'Resultado... 🖼️🎉')
-      fsUtils.deletFileToPath(pathToFile);
-
-      delete objectMessagesTemp[message.from];
-      await client.sendText(message.from, 'Imagem gerada com sucesso! 🖼️🎉\nPara gerar uma nova imagem digite: !image 🖼️');
+      
+      const { data } = await generateImageGPT(message.body);
+  
+      // URL da imagem para exemplo
+      const imageUrl = data[0]?.url; 
+      
+      if (!imageUrl) return await client.sendText(message.from, 'Desculpe! Não consegui gerar a imagem... por favor tente novamente!')
+  
+  
+      await client.sendText(message.from, 'Preparando a imagem! 🖼️⏳')
+      const pathToFile = await fsUtils.downloadFileByLink(imageUrl);
+      const imageBase64 = await fsUtils.imageToBase64(pathToFile);
+  
+      try {
+        await client.sendImageFromBase64(message.from, imageBase64, 'image.png', 'Resultado... 🖼️🎉')
+        fsUtils.deletFileToPath(pathToFile);
+  
+        delete objectMessagesTemp[message.from];
+        await client.sendText(message.from, 'Imagem gerada com sucesso! 🖼️🎉\nPara gerar uma nova imagem digite: !image 🖼️');
+      } catch (error) {
+        console.log("Erro ao enviar com o sendImage", error);
+        await client.sendText(message.from, 'Desculpe! Não consegui enviar a imagem... Tente acessar o link para visualizar a imagem gerada! 🖼️🔗');
+        await client.sendLinkPreview(message.from, imageUrl, 'Link da imagem gerada', '');
+      }
     } catch (error) {
-      console.log("Erro ao enviar com o sendImage", error);
-      await client.sendText(message.from, 'Desculpe! Não consegui enviar a imagem... Tente acessar o link para visualizar a imagem gerada! 🖼️🔗');
-      await client.sendLinkPreview(message.from, imageUrl, 'Link da imagem gerada');
+      console.log("Erro ao gerar imagem", error);
+      await client.sendText(message.from, 'Desculpe! Não consegui gerar a imagem... por favor tente novamente!')
     }
   }
 } as CommandType;

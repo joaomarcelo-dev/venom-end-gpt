@@ -21,5 +21,5 @@ export type CommandType = {
   details?: string
   model?: string
   action: ({ client, message }: ActionParmsType) => void
-  initialAction?: ({ client, message }: ActionParmsType) => void
+  initialAction: ({ client, message }: ActionParmsType) => void
 }

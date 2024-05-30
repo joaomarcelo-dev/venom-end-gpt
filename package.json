@@ -4,10 +4,12 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "install:py": "python3 -m pip install --force-reinstall https://github.com/yt-dlp/yt-dlp/archive/master.tar.gz && pip install -r requirements.txt",
     "fix-venom": "node ./src/app/fix-venom.js",
-    "dev": "npm run fix-venom && ts-node-dev --respawn --transpile-only ./src/index.ts",
+    "dev": "npm run fix-venom && npm run install:py && ts-node-dev --respawn --transpile-only ./src/index.ts",
     "build": "tsc",
-    "start": "node ./build/index.js"
+    "start": "node ./build/index.js",
+    "test:app": "tsnd --respawn --transpile-only ./src/app/commands/test.ts"
   },
   "keywords": [],
   "author": "",
@@ -22,6 +24,7 @@
   "dependencies": {
     "@prisma/client": "^5.7.1",
     "axios": "^1.6.5",
+    "child_process": "^1.0.2",
     "dayjs": "^1.11.10",
     "dotenv": "^16.3.1",
     "mime-types": "^2.1.35",
@@ -29,6 +32,7 @@
     "openai": "^4.24.1",
     "prisma": "^5.7.1",
     "uuid": "^9.0.1",
-    "venom-bot": "^5.0.21"
+    "venom-bot": "^5.0.21",
+    "ytdl-core": "^4.11.5"
   }
 }

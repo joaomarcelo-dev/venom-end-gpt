@@ -2,6 +2,7 @@ import { Whatsapp, Message } from 'venom-bot';
 import { numberIncludesInMessagesTemp, objectMessagesTemp } from '../temp/messages.temp';
 import path from 'node:path';
 import fs from 'node:fs';
+import { CommandType } from '../types/Commands.types';
 
 const appStart = (client: Whatsapp) => {
   client.onMessage(async (message: Message) => {    
@@ -25,10 +26,10 @@ const generateMessages = async (client: Whatsapp, message: Message) => {
   
 
   for (const command of commands) {
-    const { default: commandPlay } = await import(`./commands/${command}`);
+    const { default: commandPlay }: {default: CommandType} = await import(`./commands/${command}`);
 
     if (commandPlay.command === message.body) {
-      await commandPlay.initialAction({ client, message })
+      await commandPlay.initialAction({ client, message }) 
     }
   }
 }
